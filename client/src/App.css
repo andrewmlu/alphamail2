@@ -1,16 +1,6 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+#home-logo {
+  color: black;
+  text-decoration: none;
 }
 
 .App-header {
@@ -24,9 +14,6 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
 
 @keyframes App-logo-spin {
   from {
@@ -53,4 +40,13 @@
 
 ::-webkit-scrollbar {
   display: none;
+}
+
+.nontextlink {
+  text-decoration: none;
+  color: black;
+}
+
+.email-preview:hover {
+  background-color: #F8F8F8;
 }

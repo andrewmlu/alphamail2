@@ -1,6 +1,6 @@
 from flask_restful import Api, Resource
 from apis.gmailapi import connect_gmail
-from apis.main import get_ids, get_metadata_from_ids
+from apis.main import get_ids, get_metadata_from_ids, get_email_from_id
 
 class RetrievalStatic(Resource):
 	def get (self):
@@ -32,5 +32,12 @@ class RetrievalStatic(Resource):
 class RetrievalSample(Resource):
 	def get (self):
 		service = connect_gmail()
-		ids = get_ids(service)
+		ids = get_ids(service, quantity=25)
 		return get_metadata_from_ids(service, ids)
+
+class RetrievalThread(Resource):
+	def __init__(self, service):
+		self.service = service
+
+	def get(self, id):
+		return get_email_from_id(self.service, id)

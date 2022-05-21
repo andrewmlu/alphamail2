@@ -20,7 +20,7 @@ const Carousel = () => {
     		<h3 className="mt-4">Important Mail</h3>
     		<div className="d-flex flex-row flex-nowrap gap-4 mt-4 overflow-auto">
 				{/* TODO fix vertical scrolling issue */}
-				{/* TODO fix link color and hover color */}
+				{/* DONE 2022.05.19-23.06 fix link color and hover color */}
 				{ mail.status === 200 ? 
 					mail.data.map((card) =>
 						<> 
@@ -42,7 +42,7 @@ const Carousel = () => {
 				: '' }
 			</div>
 			{/* TODO consider separating into two js files? */}
-			{/* DONE 2022.05.19-21.10 link other mail to thread */}
+			{/* TODO link other mail to thread */}
 			<h3 className="mt-4">Other Mail</h3>
 			<div>
 				<ul className="list-group mt-4">
@@ -50,16 +50,14 @@ const Carousel = () => {
 					mail.data.map((card) =>
 						<> 
 							{card.type === 'unimportant' ?
-									<li className="list-group-item m-1 p-0 border" key={card.key}>
-
-								<Link to={`thread/${card.id}`} className={'nontextlink'}>
-										<div className={'nontextlink py-2 px-3'}>
+								<li className="list-group-item m-1 p-0 border" key={card.key}>
+									<Link to={`thread/${card.id}`} className={'nontextlink'}>
+										<div className={'nontextlink py-2 px-3 email-preview'}>
 											<span style={{"fontWeight": "500"}}>{card.author} &emsp; &emsp; {card.subject}</span> &emsp; &emsp; {card.preview}
 										</div>
-
 							{/*	TODO improve spacing and lines for rows (one or two lines only) */}
-
-								</Link></li>
+									</Link>
+								</li>
 							: '' }
 						</>) 
 				: '' }

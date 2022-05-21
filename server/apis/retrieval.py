@@ -1,9 +1,9 @@
 from flask_restful import Api, Resource
-from apis.gmailapi import connect_gmail
-from apis.main import get_ids, get_metadata_from_ids, get_email_from_id
+from server.apis.gmailapi import connect_gmail
+from server.apis.helpers import get_ids, get_metadata_from_ids, get_email_from_id
 
 class RetrievalStatic(Resource):
-	def get (self):
+	def get(self):
 		return [{'type': 'important', 'id': 5, 'subject': 'hello world', 'author': 'Author 1', 'preview': 'la dee da dee da diddly doo me doo da pa dae doe mi doo'},
 		{'type': 'important', 'id': 6, 'subject': 'bye world', 'author': 'Author 2', 'preview': 'la dee da dee da diddly doo me doo da pa dae doe mi doo'},
 		{'type': 'important', 'id': 7, 'subject': 'hello world', 'author': 'Author 1', 'preview': 'la dee da dee da diddly doo me doo da pa dae doe mi doo'},
@@ -30,7 +30,7 @@ class RetrievalStatic(Resource):
 		{'type': 'unimportant', 'id': 612, 'subject': 'bye earth', 'author': 'Author 2', 'preview': 'la dee da dee da diddly doo me doo da pa dae doe mi doo'}]
 
 class RetrievalSample(Resource):
-	def get (self):
+	def get(self):
 		service = connect_gmail()
 		ids = get_ids(service, quantity=25)
 		return get_metadata_from_ids(service, ids)

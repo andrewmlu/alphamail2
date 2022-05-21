@@ -26,6 +26,10 @@ yarn-error.log*
 venv
 __pycache__
 .idea
+
 token.json
 token_test.json
 credentials.json
+
+data
+saved_models

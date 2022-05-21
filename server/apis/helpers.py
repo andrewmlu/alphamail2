@@ -2,10 +2,11 @@ import html
 import re
 import time
 from base64 import urlsafe_b64decode, urlsafe_b64encode
+import sys
 
 verbose = 0
 
-def get_ids(service, user_id='me', labels=[], quantity=25):
+def get_ids(service, user_id='me', labels=[], quantity=sys.maxsize):
     """
     Retrieves all IDs of emails by parsing through each
     page of email IDs given an API connection.
@@ -14,6 +15,7 @@ def get_ids(service, user_id='me', labels=[], quantity=25):
     service -- gmail API connection
     user_id -- user ID of messages to retrieve
     labels -- labels for which to retrieve messages
+    quantity -- number of email ids to retrieve (default to all)
 
     Returns:
     list of email message IDs based on specified criteria
@@ -53,7 +55,7 @@ def get_metadata_from_id(service, message_id, user_id='me'):
     if 'labelIds' in msg: metadata['labels'] = msg['labelIds']
     else: metadata['labels'] = []
 
-    if 'IMPORTANT' in msg['labelIds']: metadata['type'] = 'important'
+    if 'IMPORTANT' in metadata['labels']: metadata['type'] = 'important'
     else: metadata['type'] = 'unimportant'
 
     if headers:
@@ -80,12 +82,16 @@ def get_raw_data_from_id(service, id, user_id='me', format=format):
 def get_metadata_from_ids(service, ids, user_id='me'):
     start_time = time.time()
     metadata = []
+    count = 0
     for id in ids:
         metadata.append(get_metadata_from_id(service, id, user_id=user_id))
+        count += 1
+        if count % 50 == 0:
+            print(f'{count}/{len(ids)}: {(time.time()-start_time):.3f} seconds')
     print(f'get_metadata_from_ids execution time: {(time.time()-start_time):.3f} seconds')  # see https://stackoverflow.com/questions/1995615/how-can-i-format-a-decimal-to-always-show-2-decimal-places
     return metadata
 
-# TODO embed HTML in message display
+# DONE 2022.05.19-23.04 embed HTML in message display
 # based on https://www.thepythoncode.com/article/use-gmail-api-in-python
 def get_email_from_id(service, id, user_id='me'):
     message = {}
@@ -114,6 +120,7 @@ def get_email_from_id(service, id, user_id='me'):
     message['body-html'], message['body-text'] = parse_parts(service, parts)
     return message
 
+# TODO improve html and text recursive pattern
 # see https://www.ehfeng.com/gmail-api-mime-types/ for detail on mime types
 def parse_parts(service, parts):
     """

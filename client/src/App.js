@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { BrowserRouter, Outlet, Link } from 'react-router-dom';
 
-// DONE 2022.05.19-22.20 learn react router
+// DONE 2022.05.19-19.00 learn react router
 function App() {
     return (
         <div className={"container-fluid"}>

@@ -11,7 +11,7 @@ app = Flask(__name__, static_folder='../client/build', static_url_path='/')
 # CORS(app)
 api = Api(app)
 
-@app.route('/', defaults={'path':''})
+@app.route('/', defaults={'path': ''})
 def serve(path):
     return send_from_directory(app.static_folder,'index.html')
 
@@ -24,6 +24,6 @@ api.add_resource(RetrievalStatic, '/api/retrieval_static')
 api.add_resource(RetrievalSample, '/api/retrieval_sample')
 api.add_resource(RetrievalThread, '/api/thread/<id>', resource_class_kwargs={'service': service})
 
-# TODO enable click into emails for reading
+# DONE 2022.05.19-23.05 enable click into emails for reading
 # TODO link to database
 # TODO importance email ranking

@@ -1,3 +1,5 @@
 import {combineReducers} from "redux";
 
-export default combineReducers({});
+import inbox from './inbox';
+
+export default combineReducers({inbox});

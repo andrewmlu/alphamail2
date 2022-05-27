@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+
+import { getEmail } from "../actions/inbox";
 
 const localpath = 'http://127.0.0.1:5000'
 const deploypath = 'https://alphamail-v1.herokuapp.com'
 
 const Carousel = () => {
-	const [mail, setMail] = useState([]);
+	// const [mail, setMail] = useState([]);
 
+	// DONE 2022.05.26-18.02 implement store for faster inbox loading
+	const dispatch = useDispatch();
 	useEffect(() => {
-		axios.get(`${localpath}/api/retrieval_sample`).then(res => {
-			console.log('SUCCESS', res);
-			setMail(res)
-		});
-	}, []);
+		dispatch(getEmail());
+    }, [dispatch])
+
+	const mail = useSelector((state) => state.inbox);
+
 	// TODO add vertical scrollbar
 	return (
 		<div className="wrapper container-fluid py-2 px-0">
@@ -21,9 +26,9 @@ const Carousel = () => {
     		<div className="d-flex flex-row flex-nowrap gap-4 mt-4 overflow-auto">
 				{/* TODO fix vertical scrolling issue */}
 				{/* DONE 2022.05.19-23.06 fix link color and hover color */}
-				{ mail.status === 200 ? 
-					mail.data.map((card) =>
-						<> 
+				{ mail.length ?
+					mail.map((card) =>
+						<>
 							{card.type === 'important' ?
 							<Link to={`thread/${card.id}`} className={'nontextlink'}>
 								<div className="col" style={{flex: 0}} key={card.id}>
@@ -39,16 +44,16 @@ const Carousel = () => {
 							</Link>
 							: '' }
 						</>)
-				: '' }
+				: 'loading...' }
 			</div>
 			{/* TODO consider separating into two js files? */}
 			{/* TODO link other mail to thread */}
 			<h3 className="mt-4">Other Mail</h3>
 			<div>
 				<ul className="list-group mt-4">
-				{ mail.status === 200 ? 
-					mail.data.map((card) =>
-						<> 
+				{ mail.length ?
+					mail.map((card) =>
+						<>
 							{card.type === 'unimportant' ?
 								<li className="list-group-item m-1 p-0 border" key={card.key}>
 									<Link to={`thread/${card.id}`} className={'nontextlink'}>
@@ -59,8 +64,8 @@ const Carousel = () => {
 									</Link>
 								</li>
 							: '' }
-						</>) 
-				: '' }
+						</>)
+				: 'loading...' }
 				</ul>
 			</div>
 		</div>

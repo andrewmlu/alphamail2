@@ -3,6 +3,7 @@ import re
 import time
 from base64 import urlsafe_b64decode, urlsafe_b64encode
 import sys
+import ast
 
 verbose = 0
 
@@ -40,10 +41,12 @@ def get_ids(service, user_id='me', labels=[], quantity=sys.maxsize):
     except Exception as error:
         print('An error occurred here: %s' % error)
 
+def get_message_from_id(service, message_id, user_id='me'):
+    return service.users().messages().get(userId=user_id, id=message_id, format='metadata').execute()
+
 # DONE 2022.05.19-12.23 fix &#39; &quot; and other characters in preview (and maybe subject?)
 # DONE 2022.05.19-12.43 fix author field to exclude <email@address.com> for initial display, but pass in separately
-def get_metadata_from_id(service, message_id, user_id='me'):
-    msg = service.users().messages().get(userId=user_id, id=message_id, format='metadata').execute()
+def get_metadata_from_message(msg):
     metadata = {}
 
     payload = msg['payload']
@@ -75,20 +78,35 @@ def get_metadata_from_id(service, message_id, user_id='me'):
 def get_raw_data_from_id(service, id, user_id='me', format=format):
     return service.users().messages().get(userId=user_id, id=id, format=format).execute()
 
+def batch_request_messages_from_ids(service, ids, format, user_id='me'):
+    start_time = time.time()
+    data = []
+    while len(ids) > 0:
+        batch = service.new_batch_http_request()
+        if len(ids) > 100:
+            batch_ids = ids[:100]
+            ids = ids[100:]
+        else:
+            batch_ids = ids
+            ids = []
+        for id in batch_ids:
+            batch.add(service.users().messages().get(userId=user_id, id=id, format=format))
+        batch.execute()
+        for res in list(batch._responses.values()):  # extract data from batch response
+            data.append(ast.literal_eval(res[1].decode('UTF-8')))
+            # TODO understand different string formats like UTF-8
+    print(f'batch_request_from_ids execution time: {(time.time()-start_time):.3f} seconds')  # see https://stackoverflow.com/questions/1995615/how-can-i-format-a-decimal-to-always-show-2-decimal-places
+    return data
 
 # DONE 2022.05.19-12.59 track execution runtime
 # TODO optimize through multithreading https://stackoverflow.com/questions/16982569/making-multiple-api-calls-in-parallel-using-python-ipython & https://medium.com/swlh/parallel-asynchronous-api-call-in-python-f6aa663206c6
-# TODO consider using batch operations https://stackoverflow.com/questions/65730876/gmail-api-how-can-i-get-the-message-body
-def get_metadata_from_ids(service, ids, user_id='me'):
+# DONE 2022.05.26-19.10 consider using batch operations https://stackoverflow.com/questions/65730876/gmail-api-how-can-i-get-the-message-body
+def get_metadata_from_messages(msgs):
     start_time = time.time()
     metadata = []
-    count = 0
-    for id in ids:
-        metadata.append(get_metadata_from_id(service, id, user_id=user_id))
-        count += 1
-        if count % 50 == 0:
-            print(f'{count}/{len(ids)}: {(time.time()-start_time):.3f} seconds')
-    print(f'get_metadata_from_ids execution time: {(time.time()-start_time):.3f} seconds')  # see https://stackoverflow.com/questions/1995615/how-can-i-format-a-decimal-to-always-show-2-decimal-places
+    for msg in msgs:
+        metadata.append(get_metadata_from_message(msg))
+    print(f'get_metadata_from_messages execution time: {(time.time() - start_time):.3f} seconds')
     return metadata
 
 # DONE 2022.05.19-23.04 embed HTML in message display

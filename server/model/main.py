@@ -1,13 +1,19 @@
-from server.model.models import model1
+from tensorflow import keras
+import tensorflow_hub as hub
+import tensorflow_text as text
 
 # some inspiration from https://dref360.github.io/keras-web/
 class Model:
     def __init__(self):
         self.model = None
 
-    def initialize(self, model=model1):
-        self.model = model()
-        self.model.compile(optimizer='adam', loss='mse')
+    def initialize(self, model):
+        self.model = model
+        self.model.compile(optimizer='adam', loss='binary_crossentropy')
+
+    def load(self, file_name, file_path='server/model/saved_models'):
+        self.model = keras.models.load_model(f'{file_path}/{file_name}',
+                                             custom_objects={'KerasLayer': hub.KerasLayer})
 
     def summary(self):
         return self.model.summary()

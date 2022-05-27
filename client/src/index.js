@@ -15,18 +15,22 @@ import Recents from "./components/recents";
 import NotFound from "./components/notfound";
 import Thread from "./components/thread";
 
+const store = createStore(reducers, compose(applyMiddleware(thunk)));
+
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-    <BrowserRouter>
-        <Routes>
-            <Route path={'/'} element={<App />}>
-                <Route index element={<Carousel />}/>
-                <Route path={'threads'} element={<Recents />}/>
-                <Route path={'thread/:threadId'} element={<Thread />}/>
-                <Route path={':notfound'} element={<NotFound />}/>
-            </Route>
-        </Routes>
-    </BrowserRouter>
+    <Provider store={store}>
+        <BrowserRouter>
+            <Routes>
+                <Route path={'/'} element={<App />}>
+                    <Route index element={<Carousel />}/>
+                    <Route path={'threads'} element={<Recents />}/>
+                    <Route path={'thread/:threadId'} element={<Thread />}/>
+                    <Route path={':notfound'} element={<NotFound />}/>
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    </Provider>
 
 )
 

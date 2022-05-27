@@ -36,7 +36,7 @@ def generate_dataset(service=None, file_name='metadata', file_path='server/data'
 def split_dataset(dataset, train_pct, val_pct, test_pct):
     total_pct = train_pct + val_pct + test_pct
     val_idx = int(train_pct / total_pct * len(dataset))
-    test_idx = int((val_pct + test_pct) / total_pct * len(dataset))
+    test_idx = int((val_pct + train_pct) / total_pct * len(dataset))
     indices = np.arange(len(dataset))
     random.shuffle(indices)
     train_x = np.array(dataset[indices[0:val_idx], :-1], dtype='U')

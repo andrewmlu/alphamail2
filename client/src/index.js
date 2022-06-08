@@ -14,6 +14,7 @@ import Carousel from "./components/carousel";
 import Recents from "./components/recents";
 import NotFound from "./components/notfound";
 import Thread from "./components/thread";
+import Composer from "./components/composer";
 
 const store = createStore(reducers, compose(applyMiddleware(thunk)));
 
@@ -26,6 +27,7 @@ root.render(
                     <Route index element={<Carousel />}/>
                     <Route path={'threads'} element={<Recents />}/>
                     <Route path={'thread/:threadId'} element={<Thread />}/>
+                    <Route path={'compose'} element={<Composer />}/>
                     <Route path={':notfound'} element={<NotFound />}/>
                 </Route>
             </Routes>

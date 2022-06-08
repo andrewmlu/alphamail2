@@ -46,6 +46,7 @@ def get_message_from_id(service, message_id, user_id='me'):
 
 # DONE 2022.05.19-12.23 fix &#39; &quot; and other characters in preview (and maybe subject?)
 # DONE 2022.05.19-12.43 fix author field to exclude <email@address.com> for initial display, but pass in separately
+# TODO add threadid
 def get_metadata_from_message(msg):
     metadata = {}
 

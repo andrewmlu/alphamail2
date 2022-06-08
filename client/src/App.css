@@ -24,20 +24,6 @@
   }
 }
 
-#test1 {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-#test2 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: scroll;
-}
-
 ::-webkit-scrollbar {
   display: none;
 }
@@ -49,4 +35,13 @@
 
 .email-preview:hover {
   background-color: #F8F8F8;
+}
+
+.rounded-5 {
+  --bs-border-radius-2xl: 1.25rem;
+}
+
+#button-submit {
+  background-color: #353554;
+  border: none;
 }

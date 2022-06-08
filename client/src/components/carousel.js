@@ -20,6 +20,8 @@ const Carousel = () => {
 	const mail = useSelector((state) => state.inbox);
 
 	// TODO add vertical scrollbar
+	// TODO add read unread
+	// TODO add labels
 	return (
 		<div className="wrapper container-fluid py-2 px-0">
     		<h3 className="mt-4">Important Mail</h3>
@@ -30,6 +32,7 @@ const Carousel = () => {
 					mail.map((card) =>
 						<>
 							{card.type === 'important' ?
+							//	TODO merge by thread or display latest in thread
 							<Link to={`thread/${card.id}`} className={'nontextlink'}>
 								<div className="col" style={{flex: 0}} key={card.id}>
 									{/* TODO why does hover cause blue text color even with link tag as black text if div is not nontextlink (maybe two sets of styles?) it seems like both have their own criteria and changing one does not change the other unless it fully covers */}

@@ -17,6 +17,7 @@ const Thread = () => {
 		});
 	}, []);
 
+	// TODO fix html css modifications from message html
 	return (
 		<div>
 			{thread.status === 200 ?

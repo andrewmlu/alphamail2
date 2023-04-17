@@ -34,7 +34,7 @@ def generate_dataset(service=None, file_name='metadata', file_path='server/data'
     dataset = []
     count = 0
     for msg_metadata in metadata:
-        msg_headline = f'{msg_metadata["author"]} <{msg_metadata["author-address"]}>: {msg_metadata["subject"]}'
+        msg_headline = f'{msg_metadata["authors"]}: {msg_metadata["subject"]}'
         importance = 1 if 'IMPORTANT' in msg_metadata['labels'] else 0
         dataset.append([msg_headline, importance])
         count += 1

@@ -7,7 +7,6 @@ import tensorflow_text
 
 # install tensorflow-text same version as tensorflow https://www.tensorflow.org/text/guide/tf_text_intro
 
-
 def model1():
     """
     Based on BERT model as outlined by
@@ -48,5 +47,17 @@ def model2():
     output = Dense(1, activation='sigmoid')(dropout)
 
     model = Model(inputs=[text_input], outputs=output)
+
+    return model
+
+
+def model3():
+    """
+    GPT-3 based embeddings model for email classification
+    """
+    input = Input(shape=(1536,))
+    dropout = Dropout(0.05)(input)
+    output = Dense(1, activation='sigmoid')(dropout)
+    model = Model(inputs=[input], outputs=output)
 
     return model

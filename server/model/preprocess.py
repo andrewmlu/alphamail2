@@ -1,8 +1,17 @@
-from server.apis.helpers import get_ids, get_metadata_from_ids
+from server.apis.helpers import get_ids, get_metadata_from_threads, batch_request_threads_from_ids
 from server.model.helpers import save_data, load_data
-import os.path
+import os
+from dotenv import load_dotenv
+from pathlib import Path
 import numpy as np
 import random
+import openai
+
+load_dotenv()
+
+openai.api_key = os.getenv('OPENAI_API_KEY') # seems like need to rerun python in terminal in order to refresh code, .env is based on location of terminal run not file location
+
+# DONE 2023.04.16-19.09 create env file and var for openai api key
 
 # DONE 2022.05.20-12.26 save files like metadata
 # DONE 2022.05.20-12.26 load files
@@ -16,8 +25,11 @@ def generate_dataset(service=None, file_name='metadata', file_path='server/data'
     if os.path.isfile(file_loc):
         metadata = load_data(file_loc)
     else:
+        # DONE 2023.04.16-22.46 fix get_metadata_from_ids for threads
         ids = get_ids(service)
-        metadata = get_metadata_from_ids(service, ids)
+        threads = batch_request_threads_from_ids(service, ids, format='metadata')
+        metadata = get_metadata_from_threads(threads)
+        # metadata = get_metadata_from_ids(service, ids)
         save_data(metadata, file_loc)
     dataset = []
     count = 0
@@ -46,3 +58,25 @@ def split_dataset(dataset, train_pct, val_pct, test_pct):
     test_x = np.array(dataset[indices[test_idx:], :-1], dtype='U')
     test_y = np.array(dataset[indices[test_idx:], -1:], dtype='i')
     return train_x, train_y, val_x, val_y, test_x, test_y
+
+
+def get_embedding(text, model='text-embedding-ada-002'):
+    """
+    Returns OpenAI text model embedding or batch of embeddings
+    """
+    return openai.Embedding.create(input=text, model=model)['data']
+
+# DONE 2023.02.04-05.47 batch embedding API calls
+def get_embeddings(dataset):
+    embeddings = []
+    batch = []
+    for i, text in enumerate(dataset):
+        batch.append(text[0])
+        if (i % 100 == 99 or i == len(dataset)-1) and len(batch) != 0:
+            print("embedding progress:", i+1, "of", len(dataset))
+            # print(batch)
+            for embedding in get_embedding(batch):
+                embeddings.append(embedding['embedding'])
+            batch = []
+
+    return np.array(embeddings)

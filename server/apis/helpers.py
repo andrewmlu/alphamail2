@@ -7,6 +7,21 @@ import ast
 
 verbose = 0
 
+def get_email_address(service, user_id='me'):
+    """
+    Retrieves the email address of the user.
+    Parameters:
+    service -- gmail API connection
+    user_id -- user ID of user to retrieve email address
+    """
+    try:
+        # Get the profile information of the currently authenticated user
+        profile = service.users().getProfile(userId=user_id).execute()
+        email_address = profile['emailAddress']
+        email_prefix = email_address.split('@')[0]
+        return email_prefix
+    except Exception as error:
+        print('An error occurred: %s' % error)
 
 def get_ids(service, user_id='me', labels=[], quantity=sys.maxsize):
     """
@@ -108,8 +123,16 @@ def get_metadata_from_thread(thread):
         if msg_metadata['author'] not in metadata['authors']:
             metadata['authors'].append(msg_metadata['author'])
 
-    metadata['preview'] = message_metadata[-1]['preview']
-    metadata['subject'] = message_metadata[-1]['subject']
+    if 'preview' in message_metadata[-1]:
+        metadata['preview'] = ['preview']
+    else:
+        print('no preview', thread['id'])
+        metadata['preview'] = 'no preview'
+    if 'subject' in message_metadata[0]:
+        metadata['subject'] = message_metadata[0]['subject']
+    else:
+        print('no preview', thread['id'])
+        metadata['subject'] = 'no subject'
     metadata['msg-count'] = len(message_metadata)
 
     metadata['messages'] = message_metadata

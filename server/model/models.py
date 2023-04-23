@@ -61,3 +61,41 @@ def model3():
     model = Model(inputs=[input], outputs=output)
 
     return model
+
+
+def model4():
+    """
+    BERT model with trainable parameters
+    """
+    bert_preprocessor = hub.KerasLayer('https://tfhub.dev/tensorflow/bert_en_uncased_preprocess/3')
+    bert_encoder = hub.KerasLayer('https://tfhub.dev/tensorflow/small_bert/bert_en_uncased_L-6_H-128_A-2/2', trainable=True)
+
+    text_input = Input(shape=(), dtype=tf.string)
+
+    preprocessed_text = bert_preprocessor(text_input)
+    encoded = bert_encoder(preprocessed_text)
+    dropout = Dropout(0.1)(encoded['pooled_output'])
+    output = Dense(1, activation='sigmoid')(dropout)
+
+    model = Model(inputs=[text_input], outputs=output)
+
+    return model
+
+
+def model5():
+    """
+    XLM Bert model, largest possible model available on TF Hub
+    """
+
+    bert_preprocessor = hub.KerasLayer('https://tfhub.dev/jeongukjae/xlm_roberta_multi_cased_preprocess/1')
+    bert_encoder = hub.KerasLayer('https://tfhub.dev/jeongukjae/xlm_roberta_multi_cased_L-24_H-1024_A-16/1')
+    text_input = Input(shape=(), dtype=tf.string)
+
+    preprocessed_text = bert_preprocessor(text_input)
+    encoded = bert_encoder(preprocessed_text)
+    dropout = Dropout(0.1)(encoded['pooled_output'])
+    output = Dense(1, activation='sigmoid')(dropout)
+
+    model = Model(inputs=[text_input], outputs=output)
+
+    return model

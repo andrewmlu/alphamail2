@@ -8,9 +8,10 @@ class Model:
     def __init__(self):
         self.model = None
 
-    def initialize(self, model):
+    def initialize(self, model, lr=0.001):
         self.model = model
-        self.model.compile(optimizer='adam', loss='binary_crossentropy')
+        opt = keras.optimizers.Adam(learning_rate=lr)
+        self.model.compile(optimizer=opt, loss='binary_crossentropy')
 
     def load(self, file_name, file_path='server/model/saved_models'):
         self.model = keras.models.load_model(f'{file_path}/{file_name}',
